@@ -1,39 +1,191 @@
 <!DOCTYPE html>
+<html lang="en" ng-app="nightlife-tracker">
 
-<html>
+<head>
 
-	<head>
-		<title>Clementine.js - The elegant and lightweight full stack JavaScript boilerplate.</title>
-		
-		<link href="/public/css/main.css" rel="stylesheet" type="text/css">
-	</head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Nightlife Tracking App">
+    <meta name="author" content="Luke Walker">
 
-	<header>
-		<p>Welcome, <span id="display-name"></span>!</p>
-		<a class="menu" href="/profile">Profile</a>
-		<p>|</p>
-		<a class="menu" href="/logout">Logout</a>
-	</header>
+    <title>Scrolling Nav - Start Bootstrap Template</title>
 
-	<body>
-		<div class="container">
-			<img src="/public/img/clementine_150.png" />
-			<br />
-			<p class="clementine-text">Clementine.js</p>
-		</div>
-	
-		<div class="container">
-			<p>You have clicked the button <span id="click-nbr"></span> times.</p>
-			<br />
-			<div class="btn-container">
-				<button type="submit" class="btn btn-add">CLICK ME!</button>
-				<button class="btn btn-delete">RESET</button>
-			</div>
-		</div>
-		
-		<script type="text/javascript" src="common/ajax-functions.js"></script>
-		<script type="text/javascript" src="controllers/clickController.client.js"></script>
-		<script type="text/javascript" src="controllers/userController.client.js"></script>
-	</body>
+    <!-- Bootstrap Core CSS -->
+    <link href="/public/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <script src="https://use.fontawesome.com/bfa2841172.js"></script>
+
+    <!-- Custom CSS -->
+    <link href="/public/css/scrolling-nav.css" rel="stylesheet">
+    <link href="/public/css/main.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<!-- The #page-top ID is part of the scrolling feature - the data-spy and data-target are part of the built-in Bootstrap scrollspy function -->
+
+<body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top" ng-controller="BarListController as barsCtrl">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header page-scroll">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand page-scroll" href="#page-top">Nightlife Tracker</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+          <ul class="nav navbar-nav">
+            <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
+            <li class="hidden">
+              <a class="page-scroll" href="#page-top"></a>
+            </li>
+            <li>
+              <a class="page-scroll" href="#searchresults">Bars & Clubs</a>
+            </li>
+            <li ng-show="currentUser">
+              <a class="page-scroll" href="#profile">Profile</a>
+            </li>
+            <li ng-hide="currentUser">
+              <a class="page-scroll" href="#Login">Login</a>
+            </li>
+            <li>
+              <a class="page-scroll" href="#contact">What is this?</a>
+            </li>
+            <li ng-show="currentUser">
+              <a class="page-scroll" href="#page-top">Logout</a>
+            </li>
+          </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+      </div>
+      <!-- /.container -->
+    </nav>
+
+  <!-- Intro Section -->
+  <section id="intro" class="intro-section">
+    <div class="container">
+      <div class="row intro-text">
+        <div class="col-lg-12">
+          <div class="col-md-9 col-md-offset-3">
+            <h1>Nightlife Tracker</h1>
+            <p>Find the happening spots near you.</p>
+            <p>Start by searching for your neighbourhood/area.</p>
+            
+            <div class="input-group search">
+              <input type="text" class="form-control" placeholder="Search for a city or neighborhood" aria-describedby="basic-addon2" id="search1" ng-model="searchLocation">
+              <span class="input-group-btn">
+                <input class="btn btn-default" type="submit" value="Find bars!" ng-click="barsCtrl.search(searchLocation)" id="search1go">
+              </span>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+    <!-- Bars & Clubs Section -->
+    <section id="searchresults" class="results-section">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12">
+            <h2>Bars & Clubs</h2>
+            <p>Remeber to please drink responsibly, and always take transit or a cab!</p>
+           
+            <div class="input-group search">
+              <input type="text" class="form-control" placeholder="Search again..." aria-describedby="basic-addon2" id="search2" ng-model="searchLocation">
+              <span class="input-group-btn">
+                <input class="btn btn-default" type="button" value="Find bars!" ng-click="barsCtrl.search(searchLocation)">
+              </span>
+            </div>
+        </div>
+      </div>
+      <div class="row row-flex row-flex-wrap" ng-show="barsCtrl.results.length">
+        
+        <div class="col-sm-6 col-md-3" ng-repeat="result in barsCtrl.results">
+          <div class="thumbnail bar">
+            <a href="{{ result.url }}" target="_blank">
+              <img src="{{ result.image_url }}" class="image">
+            </a>
+            <div class="caption">
+              <a href="{{ result.url }}" target="_blank">
+                <h3>{{ result.name | limitTo: 25 : 0 }}</h3>
+              </a>
+              <p>{{ result.snippet_text }}</p>
+              <p><a href="#" class="btn btn-default" role="button">0 going tonight</a></p>
+            </div><!-- /caption -->
+          </div><!-- /thumbnail -->
+        </div><!-- /bar -->
+
+      </div>
+    </section>
+    
+    <!-- Profile Section -->
+    <section id="profile" class="profile-section" ng-show="currentUser">
+      <h2>Profile</h2>
+    </section>
+    
+    <!-- Login Section -->
+    <section id="login" class="login-section">
+      <h2>Login</h2>
+      <p>Login using your account on one of these popular sites:</p>
+      <a href="/auth/github" class="btn btn-default login"><i class="fa fa-github"></i><p>Github</p></a>
+      <a href="/auth/twitter" class="btn btn-default login"><i class="fa fa-twitter"></i><p>Twitter</p></a>
+    </section>
+    
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12">
+            <h2>What is this site?</h2>
+            <p>My name is Luke Walker. You can find out more about me on <a href="http://lukewalker.org">my website</a>. Feel free to contact me if you like this and want to offer me a job!</p>
+            <p>Hi! I built this site as part of Free Code Camp's back end certification process. To learn more about Free Code Camp or this project in particular, visit <a href="https://www.freecodecamp.com/challenges/build-a-nightlife-coordination-app" target="_blank">their website</a>.</p>
+            <h3>User Stories</h3>
+            <p>These are the requirements I was given for building this site:</p>
+            <ol>
+              <li>As an unauthenticated user, I can view all bars in my area.</li>
+              <li>As an authenticated user, I can add myself to a bar to indicate I am going there tonight.</li>
+              <li>As an authenticated user, I can remove myself from a bar if I no longer want to go there.</li>
+              <li>As an unauthenticated user, when I login I should not have to search again.</li>
+            </ol>
+            <p>Bar & nightclub listings are powered by Yelp.</p>
+          </div>
+        </div>
+      </div>
+      <a href="http://www.yelp.com" class="yelp" target="_blank"><img src="/public/img/yelp.png"></a>
+    </section>
+
+    <!-- jQuery -->
+    <script src="/public/js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="/public/js/bootstrap.min.js"></script>
+
+    <!-- Angular -->
+    <script src="/node_modules/angular/angular.js"></script>
+
+    <!-- Scrolling Nav JavaScript -->
+    <script src="/public/js/jquery.easing.min.js"></script>
+    <script src="/public/js/scrolling-nav.js"></script>
+    
+    <!-- Nightlife Tracker Javascript -->
+    <script src="/controllers/app.js"></script>
+</body>
 
 </html>
