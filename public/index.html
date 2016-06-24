@@ -3,30 +3,30 @@
 
 <head>
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Nightlife Tracking App">
-    <meta name="author" content="Luke Walker">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Nightlife Tracking App">
+  <meta name="author" content="Luke Walker">
 
-    <title>Scrolling Nav - Start Bootstrap Template</title>
+  <title>Nightlife Tracker</title>
 
-    <!-- Bootstrap Core CSS -->
-    <link href="/public/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Font Awesome -->
-    <script src="https://use.fontawesome.com/bfa2841172.js"></script>
+  <!-- Bootstrap Core CSS -->
+  <link href="/public/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- Font Awesome -->
+  <script src="https://use.fontawesome.com/bfa2841172.js"></script>
 
-    <!-- Custom CSS -->
-    <link href="/public/css/scrolling-nav.css" rel="stylesheet">
-    <link href="/public/css/main.css" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link href="/public/css/scrolling-nav.css" rel="stylesheet">
+  <link href="/public/css/main.css" rel="stylesheet">
 
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
 
 </head>
 
@@ -35,7 +35,7 @@
 <body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top" ng-controller="BarListController as barsCtrl">
 
     <!-- Navigation -->
-    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation" ng-controller="UserController as user">
       <div class="container">
         <div class="navbar-header page-scroll">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
@@ -57,17 +57,17 @@
             <li>
               <a class="page-scroll" href="#searchresults">Bars & Clubs</a>
             </li>
-            <li ng-show="currentUser">
+            <li ng-show="user.current">
               <a class="page-scroll" href="#profile">Profile</a>
             </li>
-            <li ng-hide="currentUser">
-              <a class="page-scroll" href="#Login">Login</a>
+            <li ng-hide="user.current">
+              <a class="page-scroll" href="#login">Login</a>
             </li>
             <li>
               <a class="page-scroll" href="#contact">What is this?</a>
             </li>
-            <li ng-show="currentUser">
-              <a class="page-scroll" href="#page-top">Logout</a>
+            <li ng-show="user.current">
+              <a class="page-scroll" href="https://nightlife-tracker-ubershibs.c9users.io" ng-click="user.logout()">Logout</a>
             </li>
           </ul>
         </div>
@@ -77,7 +77,7 @@
     </nav>
 
   <!-- Intro Section -->
-  <section id="intro" class="intro-section">
+  <section id="intro" class="intro-section" ng-controller="UserController as user" ng-hide="user.current">
     <div class="container">
       <div class="row intro-text">
         <div class="col-lg-12">
@@ -87,9 +87,9 @@
             <p>Start by searching for your neighbourhood/area.</p>
             
             <div class="input-group search">
-              <input type="text" class="form-control" placeholder="Search for a city or neighborhood" aria-describedby="basic-addon2" id="search1" ng-model="searchLocation">
+              <input type="text" class="form-control" placeholder="Search for a city or neighborhood" aria-describedby="basic-addon2" id="search1" ng-model="bars.searchLocation">
               <span class="input-group-btn">
-                <input class="btn btn-default" type="submit" value="Find bars!" ng-click="barsCtrl.search(searchLocation)" id="search1go">
+                <input class="btn btn-default" type="submit" value="Find bars!" ng-click="barsCtrl.search(bars.searchLocation)" id="search1go">
               </span>
             </div>
             
@@ -108,17 +108,18 @@
             <p>Remeber to please drink responsibly, and always take transit or a cab!</p>
            
             <div class="input-group search">
-              <input type="text" class="form-control" placeholder="Search again..." aria-describedby="basic-addon2" id="search2" ng-model="searchLocation">
+              <input type="text" class="form-control" placeholder="Search again..." aria-describedby="basic-addon2" id="search2" ng-model="bars.searchLocation">
               <span class="input-group-btn">
-                <input class="btn btn-default" type="button" value="Find bars!" ng-click="barsCtrl.search(searchLocation)">
+                <input class="btn btn-default" type="button" value="Find bars!" ng-click="barsCtrl.search(bars.searchLocation)" id="search2go">
               </span>
             </div>
+            <p>Click the "# Going Tonight" button in any bar's listing to RSVP for tonight.</p>
         </div>
       </div>
       <div class="row row-flex row-flex-wrap" ng-show="barsCtrl.results.length">
         
         <div class="col-sm-6 col-md-3" ng-repeat="result in barsCtrl.results">
-          <div class="thumbnail bar">
+          <div class="thumbnail bar" ng-controller="RsvpController as rsvp">
             <a href="{{ result.url }}" target="_blank">
               <img src="{{ result.image_url }}" class="image">
             </a>
@@ -127,7 +128,8 @@
                 <h3>{{ result.name | limitTo: 25 : 0 }}</h3>
               </a>
               <p>{{ result.snippet_text }}</p>
-              <p><a href="#" class="btn btn-default" role="button">0 going tonight</a></p>
+              <p ng-show="rsvp.currentUser"><a href class="btn btn-default" role="button" ng-click="rsvp.add(result)"> {{ result.count }} going tonight</a></p>
+              <p ng-hide="rsvp.currentUser"> {{ result.count }} going tonight. <a href="#login" class="page-scroll">Log in to rsvp</a></p>
             </div><!-- /caption -->
           </div><!-- /thumbnail -->
         </div><!-- /bar -->
@@ -136,12 +138,26 @@
     </section>
     
     <!-- Profile Section -->
-    <section id="profile" class="profile-section" ng-show="currentUser">
+    <section id="profile" class="profile-section" ng-show="user.current" ng-controller="UserController as user">
       <h2>Profile</h2>
+      <img src="{{ user.current.avatar }}" class="profile-avatar">
+      <h3 class="profile-name">{{ user.current.username }}</h3>
+      <p>{{ user.current.socialSource }} user</p>
+      
+      <div ng-show="user.rsvps">
+        <h3>Bar RSVPs</h3>
+        <p>Currently, no one can see this list but you.</p>
+        <div ng-hide="rsvp">
+          
+        </div>
+      </div>
+      <div ng-hide="user.rsvps">
+        <p>You currently have no RSVPs at bars or nightclubs.</p>
+      </div>
     </section>
     
     <!-- Login Section -->
-    <section id="login" class="login-section">
+    <section id="login" class="login-section" ng-hide="user.current" ng-controller="UserController as user">
       <h2>Login</h2>
       <p>Login using your account on one of these popular sites:</p>
       <a href="/auth/github" class="btn btn-default login"><i class="fa fa-github"></i><p>Github</p></a>
@@ -179,6 +195,7 @@
 
     <!-- Angular -->
     <script src="/node_modules/angular/angular.js"></script>
+    <script src="/node_modules/angular-cookies/angular-cookies.js"></script>
 
     <!-- Scrolling Nav JavaScript -->
     <script src="/public/js/jquery.easing.min.js"></script>
@@ -186,6 +203,7 @@
     
     <!-- Nightlife Tracker Javascript -->
     <script src="/controllers/app.js"></script>
+    
 </body>
 
 </html>

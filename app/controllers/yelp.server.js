@@ -61,20 +61,20 @@ var request_yelp = function(set_parameters, callback) {
     return callback(error, response, body);
   });
 
-}
+};
 
 function yelp() {
   
   this.search = function(req, res) {
     
     var searchLocation = req.query.q;
+    req.session.lastSearch = searchLocation;
     
     function callback(error, response, body) {
       var data = JSON.parse(body);
       var businesses = data.businesses;
-      console.log(businesses);
       res.json(businesses);
-    };
+    }
     
     var params = {
       location: searchLocation,
@@ -83,8 +83,8 @@ function yelp() {
     }; 
   
     request_yelp(params, callback);
-  }
+  };
   
-};
+}
 
 module.exports = yelp;

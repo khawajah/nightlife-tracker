@@ -18,7 +18,7 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
 
   fs.readdirSync(process.cwd() + '/app/models').forEach(function(filename) {
-    require(process.cwd() + '/app/models/' + filename)
+    require(process.cwd() + '/app/models/' + filename);
   });
   
 	app.use(bodyParser.json());

@@ -6,7 +6,7 @@ var init = require('./init');
 passport.use(new TwitterStrategy({
     consumerKey: process.env.TWITTER_CONSUMER_KEY,
     consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
-    callbackURL: "https://ubershibs-voting-app.herokuapp.com/auth/twitter/callback"
+    callbackURL: process.env.TWIITER_CALLBACK
   },
   function(token, tokenSecret, profile, done) {
     process.nextTick(function() {
