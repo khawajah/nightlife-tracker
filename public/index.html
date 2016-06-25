@@ -148,10 +148,12 @@
         <h3>Bar RSVPs</h3>
         <p>Currently, no one can see this list but you.</p>
         <table> 
+          <tr><th>Bar</th><th>Date</th><th></th></tr>
           <tr ng-repeat="item in user.locations track by $index">
             <td><a href="{{ item.businessUrl }}" target="_blank">{{ item.business }}</a></td><td>{{ item.createdAt | date: 'medium' }}</td><td><button type="button" class="btn btn-danger" ng-click="user.removeRsvp(item)">Remove</button></td>
           </tr>
         </table>
+        <p>To see your latest RSVPs, please reload the page.</p>
       </div>
       <div ng-hide="user.locations">
         <p>You currently have no RSVPs at bars or nightclubs.</p>
