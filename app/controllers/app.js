@@ -10,19 +10,43 @@
     
     var user = this;
     
-    user.current = null;
+    this.initialize = function() {
+      user.current = null;
+      $cookieStore.remove('currentUser');
+      user.locations = [];
+    }
+    
+    this.initialize();
     
     $http.get('/api/getCurrentUser').then(function(result) {
-      user.current = result.data;
-      $cookieStore.put('currentUser', user.current);
+      if (result.data) {
+        user.current = result.data;
+        $cookieStore.put('currentUser', user.current);
+      }
+    });
+
+    $http.get('/api/userrsvps').then(function(result) {
+      user.locations = result.data;
     });
     
+    user.removeRsvp = function(item) {
+      $http.get('/api/rsvp/delete?id=' + item.businessId + '&date=' + item.createdAt).then(function(result) {
+        var index = user.locations.indexOf(item);
+        user.locations.splice(index, 1);
+      })
+    }
+    
+    user.deleteCookie = function() {
+      $cookieStore.remove('currentUser');
+    }
+    
     user.logout = function() {
+      $cookieStore.remove('currentUser');
       $http.get('/logout');
     };
 
   }]);
-  
+
   // Bars List (search results) controller
   app.controller('BarListController', ['$http', function($http) {
 
@@ -41,29 +65,39 @@
       list.forEach(function(bar) {
         $http.get('/api/rsvp/' + bar.id + '/count').then(function(result) {
           bar.count = result.data;
-          console.log("Count for " + bar.name + ": " + result.data);
         })
       })
     }
+    
     bars.search = function(searchLocation) {
       var url = '/yelp?q=' + encodeURIComponent(searchLocation);
       $http.get(url).success(function(data) {
         bars.results = data;
         bars.counts(bars.results);
       });
-    };
+    }
   
   }]);
   
-  app.controller('RsvpController', ['$http', '$cookieStore', function($http, $cookieStore) {
+  // RSVP Controller - allows user to RSVP if logged in
+  app.controller('RsvpController', ['$http', '$cookieStore', '$window', function($http, $cookieStore, $window) {
     
     this.currentUser = $cookieStore.get('currentUser');
     
     this.add = function(bar) {
-      $http.get('/api/rsvp/' + bar.id).then(function(result) {
-        bar.count++;
-      });
-    };
+      if (this.currentUser) {
+        var data = {
+          business: bar.name,
+          businessId: bar.id,
+          businessUrl: bar.url
+        };
+        $http.post('/api/rsvp/', data).then(function(data, status) {
+          bar.count++;
+        });
+      } else {
+        $window.alert('Please log in below before RSVPing')
+      }
+    }
     
   }]);
   

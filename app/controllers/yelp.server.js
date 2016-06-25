@@ -5,6 +5,9 @@ var request = require('request');
 var qs = require('querystring');  
 var _ = require('lodash');
 
+var mongoose = require('mongoose');
+var City = require('../models/citySchema');
+
 // Yelp API code courtesy https://arian.io/how-to-use-yelps-api-with-node/
 
 /* Function for yelp call
@@ -12,19 +15,17 @@ var _ = require('lodash');
  * set_parameters: object with params to search
  * callback: callback(error, response, body)
  */
-var request_yelp = function(set_parameters, callback) {
+var request_yelp = function(set_parameters, type, callback) {
 
   /* The type of request */
   var httpMethod = 'GET';
 
   /* The url we are using for the request */
-  var url = 'http://api.yelp.com/v2/search';
-
-  /* We can setup default parameters here */
-  var default_parameters = {
-    location: 'San+Francisco',
-    sort: '2'
-  };
+  if (type === 'search') {
+    var url = 'http://api.yelp.com/v2/search';
+  } else if  (type === 'business') {
+    var url = 'http://api.yelp.com/v2/business/' + set_parameters.id;
+  }
 
   /* We set the require parameters here */
   var required_parameters = {
@@ -37,8 +38,12 @@ var request_yelp = function(set_parameters, callback) {
   };
 
   /* We combine all the parameters in order of importance */ 
-  var parameters = _.assign(default_parameters, set_parameters, required_parameters);
-
+  if (type === 'search') {
+    var parameters = _.assign(set_parameters, required_parameters);
+  } else if (type === 'business') {
+    var parameters = _.assign(required_parameters);
+  }
+  
   /* We set our secrets here */
   var consumerSecret = process.env.YELP_CONSUMER_SECRET;
   var tokenSecret = process.env.YELP_TOKEN_SECRET;
@@ -51,13 +56,15 @@ var request_yelp = function(set_parameters, callback) {
   parameters.oauth_signature = signature;
 
   /* Then we turn the paramters object, to a query string */
+  
   var paramURL = qs.stringify(parameters);
 
   /* Add the query string to the url */
   var apiURL = url+'?'+paramURL;
-
+ 
   /* Then we use request to send make the API Request */
   request(apiURL, function(error, response, body){
+    console.log(apiURL);
     return callback(error, response, body);
   });
 
@@ -68,6 +75,12 @@ function yelp() {
   this.search = function(req, res) {
     
     var searchLocation = req.query.q;
+    var doc = { city: searchLocation }
+    var city = new City(doc);
+    city.save(function(err, result) {
+      if (err) { throw err; }
+      console.log('Saved search: ' + result);
+    });
     req.session.lastSearch = searchLocation;
     
     function callback(error, response, body) {
@@ -82,9 +95,23 @@ function yelp() {
       sort: '1'
     }; 
   
-    request_yelp(params, callback);
+    request_yelp(params, 'search', callback);
   };
   
+  this.getById = function(req, res) {
+    var businessId = req.params.business;
+    
+    function callback(error, response, body) {
+      var data = JSON.parse(body);
+      res.json(data);
+    }
+    
+    var params = { 
+      id: businessId
+    };
+    
+    request_yelp(params, 'business', callback);
+  }
 }
 
 module.exports = yelp;

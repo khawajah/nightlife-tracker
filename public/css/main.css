@@ -118,3 +118,18 @@ h3 {
 .profile-name {
 	font-size: 24px;
 }
+
+.barlist {
+	margin-top: 50px;
+}
+
+table {
+	width: auto;
+	margin: 30px auto 0 auto;
+}
+
+td {
+	padding: 5px 10px 5px 0;
+	width: auto;
+	text-align: left;
+}

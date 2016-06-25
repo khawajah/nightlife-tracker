@@ -6,40 +6,35 @@ function rsvpCtrl() {
   
   this.addRsvp = function(req, res) {
     if (req.user) {
-      var location = req.params.loc;
-      var doc  = { business: location, user: req.user._id };
+      var business = req.body.business;
+      var businessId = req.body.businessId;
+      var businessUrl = req.body.businessUrl;
+      var doc  = { business: business, businessId: businessId, businessUrl: businessUrl, user: req.user._id };
       var rsvp = new Rsvp(doc);
       rsvp.save(function(err, result) {
         if (err) { throw err; }
         res.json(result);
       });
     } else {
-      res.sendStatus(401, 'User must be logged in to RSVP');
+      res.sendStatus(401);
     }
   }
   
   this.deleteRsvp = function(req, res) {
     if (req.user) {
       var id = req.query.id;
-      Rsvp.findOne({ _id: id }).populate('user')
-      .exec(function(err, result) {
+      var date = req.query.date;
+      Rsvp.findOneAndUpdate({ businessId: id, createdAt: date, user: req.user  }, { deletedAt: Date.now() }, { new: true }, function(err, result) {
         if (err) { throw err; }
-        if (result.user._id === req.user._id) {
-          Rsvp.findOneAndUpdate({ _id: id }, { deletedAt: Date.now() }, { new: true }, function(err, result) {
-            if (err) { throw err; }
-            res.json(result);
-          });
-        } else {
-          res.send(401, 'Unauthorized: User can only delete his/her own RSVPs');
-        }
-      })
+        res.json(result);
+      });
     } else {
-      res.send(401, 'User must be logged in to delete an RSVP');
+      res.send(401);
     }
   };
   
   this.countRsvps = function(req, res) {
-    var id = req.query.id;
+    var id = req.params.loc;
     Rsvp.count({ business: id, deletedAt: { $exists: false }, createdAt:{$gt:new Date(Date.now() - 24*60*60 * 1000)} })
       .exec(function(err, count) {
         if (err) { throw err; }
@@ -54,8 +49,6 @@ function rsvpCtrl() {
         if (err) { throw err; }
         res.json(result);
       });
-    } else {
-      res.send(401, 'You must be logged in.');
     }    
   };
 }

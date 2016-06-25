@@ -29,12 +29,15 @@ module.exports = function (app, passport, db) {
 	app.route('/yelp')
 		.get(Yelp.search);
 	
+	app.route('/yelp/:business')
+		.get(Yelp.getById);
+		
 	app.route('/api/getLastSearch')
 		.get(UserCtrl.getLastSearch);
 	
 	// RSVP Routes
-	app.route('/api/rsvp/:loc')
-		.get(RsvpCtrl.addRsvp);
+	app.route('/api/rsvp')
+		.post(RsvpCtrl.addRsvp);
 	
 	app.route('/api/rsvp/delete')
 		.get(RsvpCtrl.deleteRsvp);
@@ -60,7 +63,7 @@ module.exports = function (app, passport, db) {
 		.get(passportGithub.authenticate('github', {scope: [ 'user' ] }));
 		
 	app.route('/auth/github/callback')
-		.get(passportGithub.authenticate('github', {successRedirect: '/#searchresul', failureRedirect: '/#login' }));
+		.get(passportGithub.authenticate('github', {successRedirect: '/', failureRedirect: '/#login' }));
 	
 	app.route('/auth/twitter')
 		.get(passportTwitter.authenticate('twitter'));

@@ -144,14 +144,16 @@
       <h3 class="profile-name">{{ user.current.username }}</h3>
       <p>{{ user.current.socialSource }} user</p>
       
-      <div ng-show="user.rsvps">
+      <div class="barlist" ng-show="user.locations">
         <h3>Bar RSVPs</h3>
         <p>Currently, no one can see this list but you.</p>
-        <div ng-hide="rsvp">
-          
-        </div>
+        <table> 
+          <tr ng-repeat="item in user.locations track by $index">
+            <td><a href="{{ item.businessUrl }}" target="_blank">{{ item.business }}</a></td><td>{{ item.createdAt | date: 'medium' }}</td><td><button type="button" class="btn btn-danger" ng-click="user.removeRsvp(item)">Remove</button></td>
+          </tr>
+        </table>
       </div>
-      <div ng-hide="user.rsvps">
+      <div ng-hide="user.locations">
         <p>You currently have no RSVPs at bars or nightclubs.</p>
       </div>
     </section>
@@ -160,8 +162,8 @@
     <section id="login" class="login-section" ng-hide="user.current" ng-controller="UserController as user">
       <h2>Login</h2>
       <p>Login using your account on one of these popular sites:</p>
-      <a href="/auth/github" class="btn btn-default login"><i class="fa fa-github"></i><p>Github</p></a>
-      <a href="/auth/twitter" class="btn btn-default login"><i class="fa fa-twitter"></i><p>Twitter</p></a>
+      <a href="/auth/github" ng-click="user.deleteCookie()" class="btn btn-default login"><i class="fa fa-github"></i><p>Github</p></a>
+      <a href="/auth/twitter" ng-click="user.deleteCookie()" class="btn btn-default login"><i class="fa fa-twitter"></i><p>Twitter</p></a>
     </section>
     
     <!-- Contact Section -->
