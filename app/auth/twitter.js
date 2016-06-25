@@ -6,7 +6,7 @@ var init = require('./init');
 passport.use(new TwitterStrategy({
     consumerKey: process.env.TWITTER_CONSUMER_KEY,
     consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
-    callbackURL: process.env.TWIITER_CALLBACK
+    callbackURL: process.env.TWITTER_CALLBACK
   },
   function(token, tokenSecret, profile, done) {
     process.nextTick(function() {
