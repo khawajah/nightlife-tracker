@@ -119,7 +119,7 @@
       <div class="row row-flex row-flex-wrap" ng-show="barsCtrl.results.length">
         
         <div class="col-sm-6 col-md-3" ng-repeat="result in barsCtrl.results">
-          <div class="thumbnail bar" ng-controller="RsvpController as rsvp">
+          <div class="thumbnail bar">
             <a href="{{ result.url }}" target="_blank">
               <img src="{{ result.image_url }}" class="image">
             </a>
@@ -127,9 +127,16 @@
               <a href="{{ result.url }}" target="_blank">
                 <h3>{{ result.name | limitTo: 25 : 0 }}</h3>
               </a>
-              <p>{{ result.snippet_text }}</p>
-              <p ng-show="rsvp.currentUser"><a href class="btn btn-default" role="button" ng-click="rsvp.add(result)"> {{ result.count }} going tonight</a></p>
-              <p ng-hide="rsvp.currentUser"> {{ result.count }} going tonight. <a href="#login" class="page-scroll">Log in to rsvp</a></p>
+              <p class="snippet">{{ result.snippet_text }}</p>
+              <div class="rsvp-section">
+                <p class="going">{{ result.count }} going tonight</p>
+              </div>
+              <div class="checkbox" ng-show="barsCtrl.currentUser">
+                <label>
+                  <input type="checkbox"> RSVP for tonight!
+                </label>
+              </div>
+              <p ng-hide="barsCtrl.currentUser"><a href="#login" class="page-scroll">Log in to rsvp</a></p>
             </div><!-- /caption -->
           </div><!-- /thumbnail -->
         </div><!-- /bar -->
@@ -143,20 +150,22 @@
       <img src="{{ user.current.avatar }}" class="profile-avatar">
       <h3 class="profile-name">{{ user.current.username }}</h3>
       <p>{{ user.current.socialSource }} user</p>
-      
-      <div class="barlist" ng-show="user.locations">
-        <h3>Bar RSVPs</h3>
-        <p>Currently, no one can see this list but you.</p>
-        <table> 
-          <tr><th>Bar</th><th>Date</th><th></th></tr>
-          <tr ng-repeat="item in user.locations track by $index">
-            <td><a href="{{ item.businessUrl }}" target="_blank">{{ item.business }}</a></td><td>{{ item.createdAt | date: 'medium' }}</td><td><button type="button" class="btn btn-danger" ng-click="user.removeRsvp(item)">Remove</button></td>
-          </tr>
-        </table>
-        <p>To see your latest RSVPs, please reload the page.</p>
-      </div>
-      <div ng-hide="user.locations">
-        <p>You currently have no RSVPs at bars or nightclubs.</p>
+      <div ng-controller="rsvpHistoryController as rsvp">
+        <div class="barlist" ng-show="rsvp.barHistory">
+          <h3>Bar RSVP History</h3>
+          <p>This list includes only RSVPs you made more than 24 hours ago. No one can see this list but you.</p>
+          <table> 
+            <tr><th>Bar</th><th>Date</th><th></th></tr>
+            <tr ng-repeat="item in rsvp.barHistory track by $index">
+              <td><a href="{{ item.businessUrl }}" target="_blank">{{ item.business }}</a></td>
+              <td>{{ item.createdAt | date: 'medium' }}</td>
+              <td><button type="button" class="btn btn-danger" ng-click="remove(item)">Remove</button></td>
+            </tr>
+          </table>
+        </div>
+        <div ng-hide="rsvp.barHistory">
+          <p>You do not have any past RSVPs.</p>
+        </div>
       </div>
     </section>
     
@@ -175,7 +184,7 @@
           <div class="col-lg-12">
             <h2>What is this site?</h2>
             <p>My name is Luke Walker. You can find out more about me on <a href="http://lukewalker.org">my website</a>. Feel free to contact me if you like this and want to offer me a job!</p>
-            <p>Hi! I built this site as part of Free Code Camp's back end certification process. To learn more about Free Code Camp or this project in particular, visit <a href="https://www.freecodecamp.com/challenges/build-a-nightlife-coordination-app" target="_blank">their website</a>.</p>
+            <p>Hi! I built this app as part of Free Code Camp's back end certification process. To learn more about Free Code Camp or this project in particular, visit <a href="https://www.freecodecamp.com/challenges/build-a-nightlife-coordination-app" target="_blank">their website</a>. The app is basaed on <a href="http://whatsgoinontonight.herokuapp.com/" target="_blank">this site</a>.</p>
             <h3>User Stories</h3>
             <p>These are the requirements I was given for building this site:</p>
             <ol>
@@ -184,6 +193,8 @@
               <li>As an authenticated user, I can remove myself from a bar if I no longer want to go there.</li>
               <li>As an unauthenticated user, when I login I should not have to search again.</li>
             </ol>
+            <p>So basically, what it does is allow you to search for bars near you (using Yelp's database), and then indicate whether or not you want to go to one or more of those bars tonight. The numbers listed beside any given bar are limited to RSVPs in the last 24 hours. Right now, you can't see who has RSVPed, just that someone has. You can see all your own RSVPs (for all time, not just the last day), on your profile page, and you're the only person who can see this.</p>
+            <p>Limited utility, right? If you've got thoughts on how I could make this app do something useful, hit me up at luke dot walker at gmail dot com, or on <a href="http://twitter.com/ubershibs">Twitter</a>. This is the first FCC project that I've really felt could use a re-think.</p>
             <p>Bar & nightclub listings are powered by Yelp.</p>
           </div>
         </div>

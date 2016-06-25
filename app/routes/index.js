@@ -9,11 +9,6 @@ var passportGithub = require('../auth/github');
 var passportTwitter = require('../auth/twitter');
 
 module.exports = function (app, passport, db) {
-	
-	function ensureAuthenticated(req, res, next) {
-  	if (req.isAuthenticated()) { return next(); }
-	  res.send(401);
-	}
 
 	var Yelp = new yelp();
 	var UserCtrl = new userCtrl();
@@ -45,9 +40,12 @@ module.exports = function (app, passport, db) {
 	app.route('/api/rsvp/:loc/count')
 		.get(RsvpCtrl.countRsvps);
 		
-	app.route('/api/userrsvps')
-		.get(RsvpCtrl.userRsvps);
+	app.route('/api/userrsvphistory')
+		.get(RsvpCtrl.userRsvpHistory);
 	
+	app.route('/api/userrsvpactivity')
+		.get(RsvpCtrl.userRsvpActivity);
+		
 	// Authentication routes
 	app.route('/logout')
 		.get(function(req, res) {
@@ -70,5 +68,4 @@ module.exports = function (app, passport, db) {
 		
 	app.route('/auth/twitter/callback')
 		.get(passportTwitter.authenticate('twitter', {successRedirect: '/', failureRedirect: '/#login' }));
-	
 };

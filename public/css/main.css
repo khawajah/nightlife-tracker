@@ -36,7 +36,26 @@ h3 {
 	margin: 20px 15px;
 }
 
+.snippet {
+	height: 100px;
+	display: block;
+	overflow: none;
+}
 
+.rsvp-section {
+	border: 1px solid rgb(51, 122, 183);
+	background-color: lightblue;
+	position: relative;
+	display: block;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	padding-top:10px;
+}
+
+.going {
+	font-size: 125%;
+	font-weight: 600;
+}
 .yelp>img {
 	height: 40px;
 	width: auto;
@@ -53,7 +72,6 @@ h3 {
 	text-align: left;
 	font-size: 16px;
 }
-
      
 .row-flex, .row-flex > div[class*='col-'] {  
     display: -webkit-box;
@@ -133,3 +151,4 @@ td {
 	width: auto;
 	text-align: left;
 }
+

@@ -35,16 +35,26 @@ function rsvpCtrl() {
   
   this.countRsvps = function(req, res) {
     var id = req.params.loc;
-    Rsvp.count({ business: id, deletedAt: { $exists: false }, createdAt:{$gt:new Date(Date.now() - 24*60*60 * 1000)} })
+    Rsvp.count({ businessId: id, deletedAt: { $exists: false }, createdAt:{$gt:new Date(Date.now() - 24*60*60 * 1000)} })
       .exec(function(err, count) {
         if (err) { throw err; }
         res.json(count);
       });
   };
   
-  this.userRsvps = function(req, res) {
+  this.userRsvpHistory = function(req, res) {
     if (req.user) {
-      Rsvp.find({ user: req.user._id, deletedAt: { $exists: false } })
+      Rsvp.find({ user: req.user._id, deletedAt: { $exists: false }, createdAt:{$lt:new Date(Date.now() - 60*60*1000)} })
+      .exec(function(err, result) {
+        if (err) { throw err; }
+        res.json(result);
+      });
+    }    
+  };
+  
+  this.userRsvpActivity = function(req, res) {
+    if (req.user) {
+      Rsvp.find({ user: req.user._id, deletedAt: { $exists: false }, createdAt:{$gt:new Date(Date.now() - 60*60*1000)} })
       .exec(function(err, result) {
         if (err) { throw err; }
         res.json(result);
