@@ -157,6 +157,7 @@
       <img src="{{ user.current.avatar }}" class="profile-avatar">
       <h3 class="profile-name">{{ user.current.username }}</h3>
       <p>{{ user.current.socialSource }} user</p>
+      <button class="logout btn btn-lg btn-default" ng-click="user.logout()">Logout</button>
       <div ng-controller="rsvpHistoryController as rsvp">
         <div class="barlist" ng-show="rsvp.barHistory">
           <h3>Bar RSVP History</h3>
@@ -174,7 +175,6 @@
           <p>You do not have any past RSVPs.</p>
         </div>
       </div>
-      <button class="logout btn btn-lg btn-default" ng-click="user.logout()">Logout</button>
     </section>
     
     <!-- Login Section -->
