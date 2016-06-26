@@ -37,6 +37,9 @@ module.exports = function (app, passport, db) {
 	app.route('/api/rsvp/delete')
 		.get(RsvpCtrl.deleteRsvp);
 		
+	app.route('/api/currentrsvp/delete')
+		.get(RsvpCtrl.deleteCurrentRsvp);
+		
 	app.route('/api/rsvp/:loc/count')
 		.get(RsvpCtrl.countRsvps);
 		

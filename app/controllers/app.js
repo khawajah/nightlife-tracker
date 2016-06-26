@@ -2,23 +2,22 @@
 'use strict';
 
 (function() {
+  
   //Main module - nightlife-tracker
   var app = angular.module('nightlife-tracker', ['ngCookies']);
   
+  
   //User Controller - returns current user, logs user out
-  app.controller('UserController', ['$http', '$cookieStore', 'userLocations', 'userService', function($http, $cookieStore, userLocations, userService) {
+  app.controller('UserController', ['$http', 'userLocations', 'userService', function($http, userLocations, userService) {
     
     var user = this;
     user.current = null;
     user.location = [];
-    $cookieStore.remove('currentUser');
-    
+
     activate();
     
     function activate() {
-      return getCurrentUser().then(function(data) {
-        console.log("Current user is: " + data);
-      });
+      return getCurrentUser()
     }
     
     function getCurrentUser() {
@@ -27,16 +26,13 @@
         return user.current;
       });
     }
-    user.deleteCookie = function() {
-      $cookieStore.remove('currentUser');
-    };
     
     user.logout = function() {
-      $cookieStore.remove('currentUser');
       $http.get('/logout');
     };
 
   }]);
+  
   
   // Bars List (search results) controller
   app.controller('BarListController', ['$http', '$scope', '$window', 'userLocations', 'userService', function($http, $scope, $window, userLocations, userService) {
@@ -46,12 +42,12 @@
     bars.results = [];
     bars.activeRsvps = [];
     bars.searchLocation = null;
-    
+
     activate();
-    
+
     function activate() {
       getLastSearch();
-      activateRsvps();
+      getActiveRsvps();
     }
     
      $scope.$on('USER: login', function(msg, user) {
@@ -64,12 +60,6 @@
         bars.searchLocation = result.data; 
         bars.search(bars.searchLocation);
       });
-    }
-    
-    function activateRsvps() {
-      return getActiveRsvps().then(function(result) {
-        console.log('Active RSVPs available');
-      }); 
     }
     
    function getActiveRsvps() {
@@ -95,21 +85,39 @@
         bars.counts(bars.results);
       });
     };
+
+    bars.toggleRsvp = function(bar) {
+      if (bars.activeRsvps.indexOf(bar.name) === -1) {
+        bars.add(bar);
+      } else {
+        bars.remove(bar);
+      }
+    }
     
     bars.add = function(bar) {
       if (bars.currentUser) {
         return userLocations.addLocation(bar).then(function(result) {
           bar.count++;
-          bars.activeRsvps.push(result);
+          bars.activeRsvps.push(result.business);
         });
       } else {
         $window.alert('Please log in below before RSVPing');
-      }
+      } 
     };
+    
+    bars.remove = function(item) {
+      return userLocations.removeCurrentRsvp(item)
+        .then(function(data) {
+          var index = bars.activeRsvps.indexOf(item);
+          bars.activeRsvps.splice(index, 1); 
+        });
+    };
+    
   }]);
   
+  
   // rsvpHistoryController takes care of RSVP related tasks
-  app.controller('rsvpHistoryController', ['userLocations', '$scope', '$cookieStore', '$window', function(userLocations, $scope, $cookieStore, $window) {
+  app.controller('rsvpHistoryController', ['userLocations', '$scope', function(userLocations, $scope) {
     
     var rsvp = this;
     
@@ -119,9 +127,7 @@
     activate();
     
     function activate() {
-      return getUserHistory().then(function() {
-        console.log('Activated locations view');
-      });  
+      return getUserHistory()  
     }
     
     $scope.$on('USER: login', function(msg, user) {
@@ -137,7 +143,7 @@
         });
     }
     
-    $scope.remove = function(item) {
+    rsvp.remove = function(item) {
       return userLocations.removeLocation(item)
         .then(function(data) {
           var index = rsvp.barHistory.indexOf(item);
@@ -146,6 +152,8 @@
     };
     
   }]);
+  
+  
   // User Factory
   app.factory('userService', userService);
   
@@ -166,17 +174,19 @@
     }
   }
    
+   
   //User Location Factory
   app.factory('userLocations', userLocations);
   
-  userLocations.$inject = ['$http'];
+  userLocations.$inject = ['$http', '$rootScope'];
 
-  function userLocations($http) {
+  function userLocations($http, $rootScope) {
     return {
       getUserHistory: getUserHistory,
       getUserActivity: getUserActivity,
       addLocation: addLocation,
-      removeLocation: removeLocation
+      removeLocation: removeLocation,
+      removeCurrentRsvp: removeCurrentRsvp
     };
     
     function getUserHistory() {
@@ -191,7 +201,11 @@
       return  $http.get('/api/userrsvpactivity').then(returnResult);
   
       function returnResult(response) {
-        return response.data;
+        var raw = response.data;
+        var clean = raw.map(function (item, index) {
+          return item. business;
+        });
+        return clean;
       }
     }
     
@@ -212,6 +226,17 @@
     function removeLocation(bar) {
       return $http.get('/api/rsvp/delete?id=' + bar.businessId + '&date=' + bar.createdAt).then(returnResult);
       
+      function returnResult(response) {
+        return response.data;
+      }
+    }
+    
+    function removeCurrentRsvp(bar) {
+      if (bar.business) {
+        return $http.get('/api/currentrsvp/delete?b=' + bar.business).then(returnResult);
+      } else {
+        return $http.get('/api/currentrsvp/delete?b=' + bar).then(returnResult);
+      }  
       function returnResult(response) {
         return response.data;
       }

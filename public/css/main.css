@@ -1,3 +1,10 @@
+/* Sitewide */
+
+h3 {
+	font-size: 18px;
+}
+
+/* Intro */
 .intro-text {
 	color: white;
 	text-align: right;
@@ -15,13 +22,71 @@
 	line-height: 1;
 }
 
-.bar {
-	border: 1px solid gray;
+/* Search Results */
+
+.search {
+	margin: 20px 15px;
 }
 
-h3 {
-	font-size: 18px;
+/* Active RSVP label styles */
+.active-rsvps {
+	display: block;
+	background-color: white;
+	border: 1px solid #ccc;
+	width: 100%;
+	border-radius: 4px;
+	padding: 10px 0 10px 0;
+	word-wrap: break-word;
+	margin-bottom: 20px;
 }
+
+.active-rsvps span:first-child {
+	font-weight: 600;
+	font-size: 125%;
+	margin-right: 10px;
+}
+
+.tag {
+  font-size: 14px;
+  padding: .3em .4em .4em;
+  margin: .2em .2em;
+  line-height: 1.8;
+  word-wrap: normal;
+  display: inline-block;
+}
+.tag a {
+  color: #bbb;
+  cursor: pointer;
+  opacity: 0.6;
+}
+.tag a:hover {
+  opacity: 1.0
+}
+.tag .remove {
+  vertical-align: bottom;
+  top: 0;
+}
+.tag a {
+  margin: 0 0 0 .3em;
+}
+.tag a .glyphicon-white {
+  color: #fff;
+  margin-bottom: 2px;
+  font-size: 18px;
+}
+/* End of Active RSVP label styles */
+
+.bar {
+	border: 1px solid #ccc;
+	padding-top: 20px;
+}
+
+.bar-name {
+	color: #5bc0de;
+	height: 19px;
+	overflow: hidden;
+}
+
 .image {
 	width: auto;
 	min-height: 180px;
@@ -32,47 +97,37 @@ h3 {
 	margin: 5px 5px 0px 5px;
 }
 
-.search {
-	margin: 20px 15px;
-}
-
 .snippet {
 	height: 100px;
 	display: block;
-	overflow: none;
+	overflow: hidden;
 }
 
 .rsvp-section {
-	border: 1px solid rgb(51, 122, 183);
-	background-color: lightblue;
+	border: 3px solid #5bc0de;
+	border-radius: 4px;
+	background-color: white;
 	position: relative;
 	display: block;
 	margin-top: 10px;
 	margin-bottom: 10px;
 	padding-top:10px;
+	padding-bottom: 5px;
+	color: #5bc0de;
 }
 
 .going {
 	font-size: 125%;
 	font-weight: 600;
 }
-.yelp>img {
-	height: 40px;
-	width: auto;
+
+.im-going {
+	color: #5cb85c;
+	border-color: #5cb85c;
+	background-color: #DEF0DE;
 }
 
-.yelp {
-	position: absolute;
-	bottom: 20px;
-	display: block;
-	right: 20px;
-}
-
-.contact-section {
-	text-align: left;
-	font-size: 16px;
-}
-     
+/* Flexbox styles for search results */     
 .row-flex, .row-flex > div[class*='col-'] {  
     display: -webkit-box;
     display: -moz-box;
@@ -96,7 +151,6 @@ h3 {
 	width:100%;
 }
 
-
 .flex-col {
     display: flex;
     display: -webkit-flex;
@@ -110,10 +164,12 @@ h3 {
     flex: 2;
 }
 
+/* Login styles */
 .login {
   display: inline-block;
   position: relative;
   margin-right: 15px;
+  margin-bottom: 15px;
 }
 
 .login:hover {
@@ -123,6 +179,7 @@ h3 {
   font-size: 12em;
 }
 
+/* Profile styles */
 .profile-avatar {
 	width: 150px;
 	height: 150px;
@@ -152,3 +209,27 @@ td {
 	text-align: left;
 }
 
+.logout {
+	position: absolute;
+	bottom: 20px;
+	display: block;
+	right: 20px;
+}
+
+/* What is this (contact section) styles */
+.yelp>img {
+	height: 40px;
+	width: auto;
+}
+
+.contact-section {
+	text-align: left;
+	font-size: 16px;
+}
+
+.yelp {
+	position: absolute;
+	bottom: 20px;
+	display: block;
+	right: 20px;
+}

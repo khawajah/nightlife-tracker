@@ -20,6 +20,18 @@ function rsvpCtrl() {
     }
   }
   
+  this.deleteCurrentRsvp = function(req, res) {
+    if (req.user) {
+      var business = req.query.b;
+      Rsvp.findOneAndUpdate({ business: business, user: req.user, createdAt: {$gt:new Date(Date.now() - 24*60*60*1000)} }, { deletedAt: Date.now() }, { new: true }, function(err, result) {
+        if (err) { throw err; }
+        res.json(result);
+      });
+    } else {
+      res.sendStatus(401);
+    }
+  }
+  
   this.deleteRsvp = function(req, res) {
     if (req.user) {
       var id = req.query.id;
@@ -29,7 +41,7 @@ function rsvpCtrl() {
         res.json(result);
       });
     } else {
-      res.send(401);
+      res.sendStatus(401);
     }
   };
   
@@ -44,7 +56,7 @@ function rsvpCtrl() {
   
   this.userRsvpHistory = function(req, res) {
     if (req.user) {
-      Rsvp.find({ user: req.user._id, deletedAt: { $exists: false }, createdAt:{$lt:new Date(Date.now() - 60*60*1000)} })
+      Rsvp.find({ user: req.user._id, deletedAt: { $exists: false }, createdAt:{$lt:new Date(Date.now() - 24*60*60*1000)} })
       .exec(function(err, result) {
         if (err) { throw err; }
         res.json(result);
@@ -54,7 +66,7 @@ function rsvpCtrl() {
   
   this.userRsvpActivity = function(req, res) {
     if (req.user) {
-      Rsvp.find({ user: req.user._id, deletedAt: { $exists: false }, createdAt:{$gt:new Date(Date.now() - 60*60*1000)} })
+      Rsvp.find({ user: req.user._id, deletedAt: { $exists: false }, createdAt:{$gt:new Date(Date.now() - 24*60*60*1000)} })
       .exec(function(err, result) {
         if (err) { throw err; }
         res.json(result);

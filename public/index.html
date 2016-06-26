@@ -113,7 +113,14 @@
                 <input class="btn btn-default" type="button" value="Find bars!" ng-click="barsCtrl.search(bars.searchLocation)" id="search2go">
               </span>
             </div>
-            <p>Click the "# Going Tonight" button in any bar's listing to RSVP for tonight.</p>
+            <div ng-show="barsCtrl.activeRsvps.length" class="active-rsvps">
+              <span>Tonight's RSVPs: </span>
+              <span class="tag label label-success" ng-repeat="location in barsCtrl.activeRsvps track by $index">
+                {{ location }} 
+                <a ng-click="barsCtrl.remove(location)"><i class="remove glyphicon glyphicon-remove-sign glyphicon-white" ></i></a> 
+              </span>
+            </div>
+          </div>  
         </div>
       </div>
       <div class="row row-flex row-flex-wrap" ng-show="barsCtrl.results.length">
@@ -125,15 +132,15 @@
             </a>
             <div class="caption">
               <a href="{{ result.url }}" target="_blank">
-                <h3>{{ result.name | limitTo: 25 : 0 }}</h3>
+                <h3 class="bar-name">{{ result.name }}</h3>
               </a>
               <p class="snippet">{{ result.snippet_text }}</p>
-              <div class="rsvp-section">
+              <div class="rsvp-section" ng-class="{'im-going': barsCtrl.activeRsvps.indexOf(result.name) > -1} ">
                 <p class="going">{{ result.count }} going tonight</p>
               </div>
               <div class="checkbox" ng-show="barsCtrl.currentUser">
                 <label>
-                  <input type="checkbox"> RSVP for tonight!
+                  <input type="checkbox" ng-click="barsCtrl.toggleRsvp(result)" ng-checked="barsCtrl.activeRsvps.indexOf(result.name) > -1"> RSVP for tonight!
                 </label>
               </div>
               <p ng-hide="barsCtrl.currentUser"><a href="#login" class="page-scroll">Log in to rsvp</a></p>
@@ -159,7 +166,7 @@
             <tr ng-repeat="item in rsvp.barHistory track by $index">
               <td><a href="{{ item.businessUrl }}" target="_blank">{{ item.business }}</a></td>
               <td>{{ item.createdAt | date: 'medium' }}</td>
-              <td><button type="button" class="btn btn-danger" ng-click="remove(item)">Remove</button></td>
+              <td><button type="button" class="btn btn-danger" ng-click="rsvp.remove(item)">Remove</button></td>
             </tr>
           </table>
         </div>
@@ -167,19 +174,20 @@
           <p>You do not have any past RSVPs.</p>
         </div>
       </div>
+      <button class="logout btn btn-lg btn-default" ng-click="user.logout()">Logout</button>
     </section>
     
     <!-- Login Section -->
     <section id="login" class="login-section" ng-hide="user.current" ng-controller="UserController as user">
       <h2>Login</h2>
       <p>Login using your account on one of these popular sites:</p>
-      <a href="/auth/github" ng-click="user.deleteCookie()" class="btn btn-default login"><i class="fa fa-github"></i><p>Github</p></a>
-      <a href="/auth/twitter" ng-click="user.deleteCookie()" class="btn btn-default login"><i class="fa fa-twitter"></i><p>Twitter</p></a>
+      <a href="/auth/github" ng-click="user.deleteCookie()" class="btn btn-default btn-transparent login"><i class="fa fa-github"></i><p>Github</p></a>
+      <a href="/auth/twitter" ng-click="user.deleteCookie()" class="btn btn-default btn-transparent login"><i class="fa fa-twitter"></i><p>Twitter</p></a>
     </section>
     
     <!-- Contact Section -->
     <section id="contact" class="contact-section">
-      <div class="container">
+      <div class="container contact-content">
         <div class="row">
           <div class="col-lg-12">
             <h2>What is this site?</h2>
@@ -193,7 +201,8 @@
               <li>As an authenticated user, I can remove myself from a bar if I no longer want to go there.</li>
               <li>As an unauthenticated user, when I login I should not have to search again.</li>
             </ol>
-            <p>So basically, what it does is allow you to search for bars near you (using Yelp's database), and then indicate whether or not you want to go to one or more of those bars tonight. The numbers listed beside any given bar are limited to RSVPs in the last 24 hours. Right now, you can't see who has RSVPed, just that someone has. You can see all your own RSVPs (for all time, not just the last day), on your profile page, and you're the only person who can see this.</p>
+            <p>So basically, what it does is allow you to search for bars near you (using Yelp's database), and then indicate whether or not you want to go to one or more of those bars tonight. The numbers listed beside any given bar are limited to RSVPs in the last 24 hours. Right now, you can't see who has RSVPed, just that someone has. You'll see a list of your current RSVPs for tonight at the top of the search page, and you can cancel them by clicking the X there, or by unchecking the RSVP for a bar in the search results.</p>
+            <p>Because you only see RSVPs for the current day in search results, I added a little profile page that lists your historical rsvps (more than 24 hours old), so that you can review where you've said you wanted to go, and delete them if you care too. Only you can see your own profile.</p>
             <p>Limited utility, right? If you've got thoughts on how I could make this app do something useful, hit me up at luke dot walker at gmail dot com, or on <a href="http://twitter.com/ubershibs">Twitter</a>. This is the first FCC project that I've really felt could use a re-think.</p>
             <p>Bar & nightclub listings are powered by Yelp.</p>
           </div>
@@ -219,6 +228,16 @@
     <!-- Nightlife Tracker Javascript -->
     <script src="/controllers/app.js"></script>
     
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+    
+      ga('create', 'UA-7816763-3', 'auto');
+      ga('send', 'pageview');
+    
+    </script>
 </body>
 
 </html>

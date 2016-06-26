@@ -58,13 +58,23 @@ of those sections to manage the look and feel of the site. */
   padding-bottom: 150px;
   text-align: center;
   background: #fff;
+  position: relative;
 }
 
+.login-section {
+  background-image: url('../img/background.jpeg');
+  background-position: center center;
+  background-size: cover;
+  background-repeat: none;
+  color: white;
+}
 .contact-section {
-  height: 100%;
+  min-height: 100%;
+  height: auto;
   padding-top: 150px;
   text-align: center;
   background: #eee;
   display: block;
   position: relative;
+  padding-bottom: 150px;
 }

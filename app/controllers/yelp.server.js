@@ -64,7 +64,6 @@ var request_yelp = function(set_parameters, type, callback) {
  
   /* Then we use request to send make the API Request */
   request(apiURL, function(error, response, body){
-    console.log(apiURL);
     return callback(error, response, body);
   });
 
@@ -79,7 +78,6 @@ function yelp() {
     var city = new City(doc);
     city.save(function(err, result) {
       if (err) { throw err; }
-      console.log('Saved search: ' + result);
     });
     req.session.lastSearch = searchLocation;
     
