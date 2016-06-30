@@ -3,21 +3,28 @@
 var yelp = require('../controllers/yelp.server');
 var userCtrl = require('../controllers/user.server');
 var rsvpCtrl = require('../controllers/rsvp.server');
+var citiesCtrl = require('../controllers/cities.server');
 
 var path = process.cwd();
 var passportGithub = require('../auth/github');
 var passportTwitter = require('../auth/twitter');
 
-module.exports = function (app, passport, db) {
+module.exports = function (app, passport) {
 
 	var Yelp = new yelp();
 	var UserCtrl = new userCtrl();
 	var RsvpCtrl = new rsvpCtrl();
+	var CitiesCtrl = new citiesCtrl();
 	
 	// Primary route
 	app.route('/')
 		.get(function (req, res) {
 			res.sendFile(path + '/public/index.html');
+		});
+		
+	app.route('/cities')
+		.get(function (req, res) {
+			res.sendFile(path + '/public/cities.html');
 		});
 	
 	// Search related routes
@@ -71,4 +78,17 @@ module.exports = function (app, passport, db) {
 		
 	app.route('/auth/twitter/callback')
 		.get(passportTwitter.authenticate('twitter', {successRedirect: '/', failureRedirect: '/#login' }));
+		
+	// Cities API calls
+	app.route('/api/cities/top')
+		.get(CitiesCtrl.topCities);
+  
+  app.route('/api/cities/recent')
+  	.get(CitiesCtrl.recentCities);
+  	
+  app.route('/api/cities/count/total')
+  	.get(CitiesCtrl.totalCities);
+  	
+  app.route('/api/cities/count/week')
+  	.get(CitiesCtrl.weeklyCities);
 };

@@ -6,9 +6,9 @@ var init = require('./init');
 
 
 passport.use(new GitHubStrategy({
-  clientID: process.env.GITHUB_ID,
-  clientSecret: process.env.GITHUB_SECRET,
-  callbackURL: process.env.GITHUB_CALLBACK
+  clientID: process.env.GITHUB_ID || "0000000",
+  clientSecret: process.env.GITHUB_SECRET || "000000000",
+  callbackURL: process.env.GITHUB_CALLBACK || "http://test.com"
   },
   function(accessToken, refreshToken, profile, done) {
    process.nextTick(function() {

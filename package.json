@@ -41,5 +41,10 @@
   },
   "engines": {
     "node": "4.4.5"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-http": "^3.0.0",
+    "mocha": "^2.5.3"
   }
 }

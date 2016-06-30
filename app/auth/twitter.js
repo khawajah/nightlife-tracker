@@ -4,9 +4,9 @@ var User = require('../models/userSchema');
 var init = require('./init');
 
 passport.use(new TwitterStrategy({
-    consumerKey: process.env.TWITTER_CONSUMER_KEY,
-    consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
-    callbackURL: process.env.TWITTER_CALLBACK
+    consumerKey: process.env.TWITTER_CONSUMER_KEY || "00000",
+    consumerSecret: process.env.TWITTER_CONSUMER_SECRET || "0000000000",
+    callbackURL: process.env.TWITTER_CALLBACK || "http://test.com"
   },
   function(token, tokenSecret, profile, done) {
     process.nextTick(function() {
