@@ -16,3 +16,7 @@ Built using:
 Go check out the app at https://nightlife-tracker.herokuapp.com.
 
 Let me know if you have any throughts or feedback!
+
+## Change Log
+June 30, 2016
+- **City stats**: I added a new, kind of hidden page, that shows the most commonly searched for cities, the most recently searched for cities, and the total number of searches overall and this week. Did this mostly because I was interested to see it, and I'd been saving the data (just the terms entered into search... No identifying info about who was doing the searching), so I figure why not. You can access it at '/cities'. I also added some tests for this new section (I'll get some more added for the rest of the app eventually!)
